@@ -161,10 +161,15 @@ count_send_file = {}
 # получение файла sgf от юзера
 @bot.message_handler(content_types=['document'])
 def get_file_svg(message):
-    if message.document.mime_type != 'application/x-go-sgf':
+    #if message.document.mime_type != 'application/x-go-sgf':
+    if not message.document.file_name.endswith('.sgf'):
+        print(f'Тип файла {message.document.file_name} не поддерживается.')
         bot.reply_to(message, 'Файл должен быть в формате SGF.')
+        count_send_file[message.chat.id] = 0
     else:
-        if (message.document.mime_type == 'application/x-go-sgf' and (not count_send_file.get(message.chat.id))):
+        #if (message.document.mime_type == 'application/x-go-sgf' and (not count_send_file.get(message.chat.id))):
+        #if (not message.document.file_name.endswith('.sgf') and (not count_send_file.get(message.chat.id))):
+        if (message.document.file_name.endswith('.sgf')):
             count_send_file[message.chat.id] = 1
 
             file_info = bot.get_file(message.document.file_id)
@@ -192,7 +197,9 @@ def get_file_svg(message):
                 print("Stderr:", result.stderr)
 
                 if result.returncode == 0:
+                    #os.remove(file_path) # файл отпраавили с коми вне диапазона от -150 до 150 - поэтому удалить файл с папки
                     print(f"Файл {file_path} успешно проанализирован!")
+
 
                 else:
                     print(f"Произошла ошибка при анализе файла {file_path}")
