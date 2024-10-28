@@ -202,29 +202,35 @@ def get_file_svg(message):
 
             def send_file_to_user():
                 while True:
-                    list_games = records_path.replace('.sgf', '-analyzed.sgf')  # может так надо... срезы еще подумай
-                    # Проверяем, что records_path заканчивается на ".sgf", и заменяем его на "-analyzed.sgf"
-                    if list_games.endswith("-analyzed.sgf"):
-                        # Проверяем, существует ли файл с окончанием "-analyzed.sgf
-                        print(f"Отправляю файл: {list_games}")
-                        print(f'имя файла {file_name}')
+                    # Проверяем, что records_path не пустой
+                    if records_path:
+                        # Формируем имя файла для анализа
+                        list_games = records_path.replace('.sgf', '-analyzed.sgf')
 
-                        # Открываем файл для отправки
-                        with open(list_games, 'rb') as fa:
-                            print(f'F файл {list_games}')
-                            bot.send_document(chat_id, fa)
-                            count_send_file[message.chat.id] = 0
+                        # Проверяем, существует ли файл с окончанием "-analyzed.sgf"
+                        if os.path.exists(list_games):
+                            print(f"Отправляю файл: {list_games}")
+                            print(f'имя файла {file_name}')
+
+                            # Открываем файл для отправки
+                            with open(list_games, 'rb') as fa:
+                                print(f'F файл {list_games}')
+                                bot.send_document(chat_id, fa)
+                                count_send_file[message.chat.id] = 0
 
                             # Удаляем файлы после успешной отправки
-
-                        os.remove(records_path)
-                        os.remove(list_games)
-                    else:
-                        print(f"Файл {list_games} не найден. Ожидание...")
+                            os.remove(records_path)
+                            os.remove(list_games)
+                        #else:
+                            #print(f"Файл {list_games} не найден. Ожидание...")
+                            #continue  # Ждем перед повторной проверкой
+                    #else:
+                       # print("records_path пустой. Ожидание...")
+                        #time.sleep(5)  # Ждем перед повторной проверкой
 
 
                     # Ждем перед повторной проверкой
-                        time.sleep(20)
+
 
             threading.Thread(target=send_file_to_user).start()
 
